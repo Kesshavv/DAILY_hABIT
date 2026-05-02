@@ -1,0 +1,479 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--cream:#FBF8F3;--warm:#F5EFE4;--ink:#1C1917;--muted:#78716C;--sub:#A8A29E;
+--sage:#3D7A4F;--sage-light:#EAF3EE;--sage-mid:#7AB890;
+--amber:#C07C2A;--amber-light:#FBF0DE;
+--rose:#C45E6A;--rose-light:#FAEAEC;
+--sky:#3B6FA0;--sky-light:#E6EEF7;
+--r:20px;--rs:12px;
+}
+body{font-family:'DM Sans',sans-serif;background:#E8E3DC;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:2rem 1rem}
+.scene{display:flex;gap:2.5rem;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.phone-label{font-family:'Sora',sans-serif;font-size:11px;font-weight:600;color:#78716C;letter-spacing:.08em;text-transform:uppercase}
+.phone{width:320px;height:640px;background:var(--cream);border-radius:36px;overflow:hidden;position:relative;border:1.5px solid #D6CFC6;box-shadow:0 4px 24px rgba(0,0,0,.10)}
+.screen{position:absolute;inset:0;overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1)}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateX(40px)}
+.screen.slide-left{transform:translateX(-40px);opacity:0;pointer-events:none}
+
+/* STATUS BAR */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 0;font-size:11px;font-weight:500;color:var(--muted)}
+
+/* SHARED */
+h1{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.25}
+h2{font-family:'Sora',sans-serif;font-size:16px;font-weight:600;color:var(--ink)}
+p{font-size:14px;color:var(--muted);line-height:1.55}
+.btn-primary{width:100%;padding:15px;background:var(--sage);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:#2f6140}
+.btn-ghost{width:100%;padding:13px;background:transparent;color:var(--muted);border:1.5px solid #D6CFC6;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-ghost:hover{border-color:#A8A29E;color:var(--ink)}
+.nav-bar{position:absolute;bottom:0;left:0;right:0;height:68px;background:var(--cream);border-top:1px solid #E7E0D8;display:flex;align-items:center;justify-content:space-around;padding-bottom:8px}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 16px;border-radius:var(--rs);transition:all .15s}
+.nav-item.active svg path,.nav-item.active svg circle,.nav-item.active svg rect{stroke:var(--sage)}
+.nav-item svg{width:20px;height:20px}
+.nav-item svg path,.nav-item svg circle,.nav-item svg rect{stroke:#A8A29E;stroke-width:1.8;fill:none;transition:stroke .15s}
+.nav-label{font-size:10px;color:#A8A29E;font-weight:500;transition:color .15s}
+.nav-item.active .nav-label{color:var(--sage)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:100px;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip.selected{background:var(--sage-light);border-color:var(--sage-mid);color:var(--sage)}
+.chip:hover{border-color:#A8A29E}
+
+/* ONBOARDING */
+#s-onboard1{background:var(--cream)}
+.ob-hero{padding:48px 24px 24px;text-align:center}
+.ob-icon{width:72px;height:72px;background:var(--sage-light);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.ob-form{padding:0 24px;display:flex;flex-direction:column;gap:12px}
+.habit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.habit-card{padding:14px 12px;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:var(--rs);cursor:pointer;transition:all .15s;text-align:center}
+.habit-card:hover,.habit-card.sel{background:var(--sage-light);border-color:var(--sage-mid)}
+.habit-card .hc-icon{font-size:22px;margin-bottom:4px}
+.habit-card .hc-name{font-size:12px;font-weight:600;color:var(--ink)}
+.ob-actions{padding:0 24px 24px;display:flex;flex-direction:column;gap:8px;margin-top:auto}
+
+/* TIME SCREEN */
+#s-time{background:var(--cream)}
+.time-picker-wrap{padding:24px;display:flex;flex-direction:column;gap:16px}
+.time-block{background:var(--warm);border:1.5px solid #E7E0D8;border-radius:var(--rs);padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s}
+.time-block:hover,.time-block.sel{border-color:var(--sage-mid);background:var(--sage-light)}
+.time-dot{width:10px;height:10px;border-radius:50%;background:#E7E0D8;transition:all .15s;flex-shrink:0}
+.time-block.sel .time-dot{background:var(--sage)}
+.time-block-text h3{font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:var(--ink)}
+.time-block-text p{font-size:12px;color:var(--muted)}
+
+/* MAIN ACTION SCREEN */
+#s-main{background:var(--cream)}
+.main-top{padding:48px 24px 20px;display:flex;justify-content:space-between;align-items:flex-start}
+.main-greeting{font-size:13px;color:var(--muted);font-weight:500}
+.streak-badge{display:flex;align-items:center;gap:5px;background:var(--amber-light);border:1px solid #E8C97A;border-radius:100px;padding:5px 10px}
+.streak-badge .fire{font-size:14px}
+.streak-badge span{font-size:13px;font-weight:700;color:var(--amber)}
+.habit-big-card{margin:0 24px;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:24px;padding:28px 24px;text-align:center}
+.habit-big-icon{font-size:48px;margin-bottom:12px}
+.habit-name{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.habit-sub{font-size:13px;color:var(--muted)}
+.done-btn{width:80px;height:80px;background:var(--sage);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:20px auto 0;font-size:28px;transition:all .2s;box-shadow:0 4px 16px rgba(61,122,79,.3)}
+.done-btn:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(61,122,79,.4)}
+.done-btn.completed{background:#fff;border:2.5px solid var(--sage)}
+.week-strip{margin:16px 24px 0;display:flex;gap:6px;justify-content:center}
+.day-pill{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-direction:column;gap:1px}
+.day-pill.done{background:var(--sage);color:#fff}
+.day-pill.today{background:var(--ink);color:#fff}
+.day-pill.miss{background:var(--warm);border:1.5px solid #E7E0D8;color:var(--muted)}
+.day-pill .dl{font-size:9px;opacity:.75}
+
+/* PROGRESS */
+#s-progress{background:var(--cream)}
+.prog-header{padding:48px 24px 16px}
+.stats-row{display:flex;gap:10px;padding:0 24px;margin-top:16px}
+.stat-card{flex:1;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:var(--rs);padding:14px;text-align:center}
+.stat-num{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:var(--sage)}
+.stat-label{font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+.cal-section{padding:16px 24px}
+.cal-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-day-label{text-align:center;font-size:10px;color:var(--sub);font-weight:500;padding-bottom:2px}
+.cal-cell{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.cal-cell.done{background:var(--sage);color:#fff}
+.cal-cell.miss{background:var(--warm);color:var(--muted)}
+.cal-cell.today{background:var(--ink);color:#fff;font-weight:700}
+.cal-cell.empty{background:transparent}
+.bar-section{padding:0 24px}
+.bar-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:11px;color:var(--muted);width:22px;font-weight:500}
+.bar-track{flex:1;height:8px;background:var(--warm);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;background:var(--sage);border-radius:4px;transition:width .6s}
+.bar-pct{font-size:11px;color:var(--muted);width:32px;text-align:right}
+
+/* MISSED DAY */
+#s-missed{background:var(--cream)}
+.missed-top{padding:48px 24px 20px}
+.notif-card{margin:0 24px 16px;background:var(--amber-light);border:1.5px solid #E8C97A;border-radius:var(--rs);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.notif-icon{width:36px;height:36px;background:var(--amber);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.notif-text h3{font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#6B4411}
+.notif-text p{font-size:12px;color:#A0631A;margin-top:2px}
+.comeback-card{margin:0 24px;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:24px;padding:24px;text-align:center}
+.comeback-icon{font-size:48px;margin-bottom:12px}
+.streak-lost{font-size:13px;color:var(--muted);margin:8px 0 16px}
+.streak-lost strong{color:var(--rose)}
+.freeze-banner{margin:12px 24px 0;background:var(--sky-light);border:1px solid #A0BFDA;border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.freeze-icon{font-size:18px}
+.freeze-text{font-size:12px;color:#2A527A;line-height:1.5}
+.freeze-text strong{color:var(--sky)}
+.missed-actions{padding:16px 24px 0;display:flex;flex-direction:column;gap:8px}
+
+/* VIZ */
+#s-viz{background:var(--cream)}
+.viz-header{padding:48px 24px 12px}
+.chain-section{padding:0 24px 12px}
+.chain-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.chain-scroll::-webkit-scrollbar{display:none}
+.chain-item{flex-shrink:0;width:40px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.chain-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.chain-dot.done{background:var(--sage)}
+.chain-dot.done::after{content:'';width:100%;height:2px;background:var(--sage);position:absolute;right:-8px;top:50%;transform:translateY(-50%)}
+.chain-dot.miss{background:var(--rose-light);border:1.5px solid #E8A0A8}
+.chain-dot.miss::after{content:'';width:100%;height:2px;background:#E8A0A8;position:absolute;right:-8px;top:50%;transform:translateY(-50%)}
+.chain-dot.today{background:var(--ink)}
+.chain-dot.future{background:var(--warm);border:1.5px solid #E7E0D8}
+.chain-dot svg{width:14px;height:14px}
+.chain-d{font-size:10px;color:var(--sub);font-weight:500}
+.heatmap-section{padding:0 24px}
+.heat-row{display:flex;gap:4px;margin-bottom:4px}
+.heat-cell{width:24px;height:24px;border-radius:5px}
+.heat-0{background:var(--warm);border:1px solid #E7E0D8}
+.heat-1{background:#B2D7BF}
+.heat-2{background:var(--sage-mid)}
+.heat-3{background:var(--sage)}
+.heat-legend{display:flex;align-items:center;gap:6px;margin-top:8px}
+.heat-legend span{font-size:11px;color:var(--muted)}
+.heat-legend .lc{width:16px;height:16px;border-radius:3px}
+
+/* COMPLETION OVERLAY */
+.confetti-overlay{position:absolute;inset:0;background:rgba(251,248,243,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .3s}
+.confetti-overlay.show{opacity:1;pointer-events:all}
+.confetti-big{font-size:72px;animation:bounce .6s ease infinite alternate}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.1)}}
+.complete-msg{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--sage);margin:16px 0 8px;text-align:center}
+.complete-sub{font-size:14px;color:var(--muted);text-align:center;padding:0 32px}
+.streak-pop{background:var(--sage-light);border:1.5px solid var(--sage-mid);border-radius:16px;padding:14px 28px;margin:16px 0;text-align:center}
+.streak-pop-num{font-family:'Sora',sans-serif;font-size:36px;font-weight:700;color:var(--sage)}
+.streak-pop-label{font-size:13px;color:var(--sage);font-weight:500}
+
+/* GITHUB FLOAT */
+.gh-float{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.gh-tooltip{background:var(--ink);color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:500;padding:7px 13px;border-radius:10px;white-space:nowrap;opacity:0;transform:translateY(4px);transition:all .2s;pointer-events:none}
+.gh-float:hover .gh-tooltip{opacity:1;transform:translateY(0)}
+.gh-btn{width:52px;height:52px;background:var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.25);text-decoration:none;animation:ghpulse 3s ease-in-out infinite}
+.gh-btn:hover{transform:scale(1.12);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.gh-btn svg{width:26px;height:26px;fill:#fff}
+@keyframes ghpulse{0%,100%{box-shadow:0 4px 16px rgba(0,0,0,.25),0 0 0 0 rgba(28,25,23,.4)}50%{box-shadow:0 4px 16px rgba(0,0,0,.25),0 0 0 8px rgba(28,25,23,0)}}
+
+.tab-nav{display:flex;gap:0;border-bottom:1px solid #E7E0D8;margin:0 24px 0}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s}
+.tab.active{color:var(--sage);border-bottom-color:var(--sage)}
+
+.section-divider{height:8px;background:var(--warm);border-top:1px solid #E7E0D8;border-bottom:1px solid #E7E0D8;margin:12px 0}
+</style>
+
+<div class="scene">
+
+<!-- PHONE 1: ONBOARDING -->
+<div class="phone-wrap">
+<div class="phone-label">1 · Onboarding</div>
+<div class="phone" id="ph1">
+
+  <div class="screen" id="s-onboard1">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div class="ob-hero">
+      <div class="ob-icon">🌱</div>
+      <h1>One habit.<br>Every day.</h1>
+      <p style="margin-top:8px;font-size:13px">Pick the single habit you want to build. We'll help you stick to it.</p>
+    </div>
+    <div style="padding:0 24px">
+      <p style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Choose your habit</p>
+      <div class="habit-grid">
+        <div class="habit-card sel" onclick="selectHabit(this)"><div class="hc-icon">💧</div><div class="hc-name">Drink water</div></div>
+        <div class="habit-card" onclick="selectHabit(this)"><div class="hc-icon">📖</div><div class="hc-name">Read 10 min</div></div>
+        <div class="habit-card" onclick="selectHabit(this)"><div class="hc-icon">🧘</div><div class="hc-name">Stretch</div></div>
+        <div class="habit-card" onclick="selectHabit(this)"><div class="hc-icon">✍️</div><div class="hc-name">Journal</div></div>
+        <div class="habit-card" onclick="selectHabit(this)"><div class="hc-icon">🚶</div><div class="hc-name">Walk</div></div>
+        <div class="habit-card" onclick="selectHabit(this)"><div class="hc-icon">✏️</div><div class="hc-name">Custom…</div></div>
+      </div>
+    </div>
+    <div class="ob-actions" style="position:absolute;bottom:0;left:0;right:0;padding:16px 24px 28px">
+      <button class="btn-primary" onclick="goScreen('ph1','s-onboard1','s-time')">Continue →</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="s-time">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div style="padding:40px 24px 12px">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">Step 2 of 2</div>
+      <h1>When should<br>we remind you?</h1>
+      <p style="margin-top:8px;font-size:13px">Set a time and we'll nudge you gently. You can always skip this.</p>
+    </div>
+    <div class="time-picker-wrap">
+      <div class="time-block sel" onclick="selTime(this)">
+        <div class="time-dot"></div>
+        <div class="time-block-text"><h3>🌅 Morning — 7:30 AM</h3><p>Start your day strong</p></div>
+      </div>
+      <div class="time-block" onclick="selTime(this)">
+        <div class="time-dot"></div>
+        <div class="time-block-text"><h3>☀️ Midday — 12:00 PM</h3><p>A mindful lunch break</p></div>
+      </div>
+      <div class="time-block" onclick="selTime(this)">
+        <div class="time-dot"></div>
+        <div class="time-block-text"><h3>🌙 Evening — 8:00 PM</h3><p>Wind down with intention</p></div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 24px 28px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn-primary" onclick="goScreen('ph1','s-time','s-main')">Start my habit →</button>
+      <button class="btn-ghost" onclick="goScreen('ph1','s-time','s-main')">Skip reminder</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="s-main">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div class="main-top">
+      <div>
+        <div class="main-greeting">Good morning</div>
+        <h2 style="font-size:18px;margin-top:2px">Today's habit</h2>
+      </div>
+      <div class="streak-badge"><span class="fire">🔥</span><span>5</span></div>
+    </div>
+    <div class="habit-big-card">
+      <div class="habit-big-icon">💧</div>
+      <div class="habit-name">Drink 8 glasses</div>
+      <div class="habit-sub">Daily · Every day</div>
+      <button class="done-btn" id="doneBtn" onclick="markDone()">✓</button>
+      <div style="font-size:12px;color:var(--muted);margin-top:12px">Tap to mark as done</div>
+    </div>
+    <div style="padding:16px 24px 0">
+      <p style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">This week</p>
+      <div class="week-strip">
+        <div class="day-pill done"><span class="dl">M</span></div>
+        <div class="day-pill done"><span class="dl">T</span></div>
+        <div class="day-pill done"><span class="dl">W</span></div>
+        <div class="day-pill done"><span class="dl">T</span></div>
+        <div class="day-pill done"><span class="dl">F</span></div>
+        <div class="day-pill today"><span class="dl">S</span></div>
+        <div class="day-pill miss"><span class="dl">S</span></div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span class="nav-label">Today</span></div>
+      <div class="nav-item" onclick="goScreen('ph1','s-main','s-progress')"><svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg><span class="nav-label">Progress</span></div>
+    </div>
+    <div class="confetti-overlay" id="confetti">
+      <div class="confetti-big">🎉</div>
+      <div class="complete-msg">Habit done!</div>
+      <div class="complete-sub">You're on a roll. Keep the streak alive.</div>
+      <div class="streak-pop"><div class="streak-pop-num">6</div><div class="streak-pop-label">day streak 🔥</div></div>
+      <button class="btn-primary" style="width:auto;padding:12px 32px;margin-top:8px" onclick="document.getElementById('confetti').classList.remove('show')">Awesome ✓</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="s-progress">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div class="prog-header">
+      <h1>Progress</h1>
+      <p style="font-size:13px;margin-top:4px">Drink 8 glasses · May 2026</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Day streak 🔥</div></div>
+      <div class="stat-card"><div class="stat-num">83%</div><div class="stat-label">This week</div></div>
+      <div class="stat-card"><div class="stat-num">18</div><div class="stat-label">Total days</div></div>
+    </div>
+    <div class="section-divider"></div>
+    <div class="cal-section">
+      <div class="cal-title">May calendar</div>
+      <div class="cal-grid">
+        <div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div><div class="cal-day-label">S</div>
+        <div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell done">1</div><div class="cal-cell done">2</div><div class="cal-cell done">3</div><div class="cal-cell miss">4</div>
+        <div class="cal-cell done">5</div><div class="cal-cell done">6</div><div class="cal-cell miss">7</div><div class="cal-cell done">8</div><div class="cal-cell done">9</div><div class="cal-cell done">10</div><div class="cal-cell done">11</div>
+        <div class="cal-cell done">12</div><div class="cal-cell done">13</div><div class="cal-cell done">14</div><div class="cal-cell done">15</div><div class="cal-cell done">16</div><div class="cal-cell today">17</div><div class="cal-cell miss">18</div>
+        <div class="cal-cell miss">19</div><div class="cal-cell miss">20</div><div class="cal-cell miss">21</div><div class="cal-cell miss">22</div><div class="cal-cell miss">23</div><div class="cal-cell miss">24</div><div class="cal-cell miss">25</div>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+    <div class="bar-section" style="padding-bottom:80px">
+      <div class="bar-title">Weekly consistency</div>
+      <div class="bar-row"><span class="bar-label">W1</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-pct">85%</span></div>
+      <div class="bar-row"><span class="bar-label">W2</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-pct">100%</span></div>
+      <div class="bar-row"><span class="bar-label">W3</span><div class="bar-track"><div class="bar-fill" style="width:83%"></div></div><span class="bar-pct">83%</span></div>
+    </div>
+    <div class="nav-bar">
+      <div class="nav-item" onclick="goScreen('ph1','s-progress','s-main')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span class="nav-label">Today</span></div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg><span class="nav-label">Progress</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- PHONE 2: MISSED DAY -->
+<div class="phone-wrap">
+<div class="phone-label">4 · Missed Day</div>
+<div class="phone" id="ph2">
+  <div class="screen" id="s-missed">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div class="missed-top">
+      <h1 style="font-size:20px">Hey, you okay? 👋</h1>
+      <p style="font-size:13px;margin-top:6px">You missed yesterday. No stress — let's keep going.</p>
+    </div>
+    <div class="notif-card">
+      <div class="notif-icon">⏰</div>
+      <div class="notif-text">
+        <h3>Reminder notification</h3>
+        <p>"Don't break your streak! Time to drink your 8 glasses today 💧"</p>
+      </div>
+    </div>
+    <div class="comeback-card">
+      <div class="comeback-icon">💧</div>
+      <h2>Drink 8 glasses</h2>
+      <div class="streak-lost">Your <strong>5-day streak</strong> ended.<br>Start a new one — right now!</div>
+      <button class="btn-primary" onclick="showMissedDone()">Mark today as done →</button>
+    </div>
+    <div class="freeze-banner">
+      <span class="freeze-icon">🛡️</span>
+      <div class="freeze-text"><strong>Streak freeze available</strong><br>One grace day per week. It won't count as a miss.</div>
+    </div>
+    <div class="missed-actions">
+      <button class="btn-ghost" style="font-size:13px">Use freeze (1 remaining)</button>
+    </div>
+    <div class="confetti-overlay" id="confetti2">
+      <div class="confetti-big">🌱</div>
+      <div class="complete-msg">You're back!</div>
+      <div class="complete-sub">A new streak starts today. Every expert was once a beginner.</div>
+      <div class="streak-pop"><div class="streak-pop-num">1</div><div class="streak-pop-label">new streak started</div></div>
+      <button class="btn-primary" style="width:auto;padding:12px 32px;margin-top:8px" onclick="document.getElementById('confetti2').classList.remove('show')">Let's go! 🚀</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PHONE 3: PROGRESS VIZ -->
+<div class="phone-wrap">
+<div class="phone-label">5 · Progress Visualization</div>
+<div class="phone" id="ph3">
+  <div class="screen" id="s-viz">
+    <div class="sbar"><span>9:41</span><span>●●●</span></div>
+    <div class="viz-header">
+      <h1 style="font-size:20px">Your journey</h1>
+      <p style="font-size:13px;margin-top:4px">21 days tracked</p>
+    </div>
+    <div class="tab-nav">
+      <div class="tab active" onclick="switchTab('chain-view','hm-view',this)">Chain</div>
+      <div class="tab" onclick="switchTab('hm-view','chain-view',this)">Heatmap</div>
+    </div>
+
+    <div id="chain-view" style="padding:16px 24px">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Don't break the chain — every dot is a day.</p>
+      <div class="chain-scroll" id="chainScroll"></div>
+      <div style="display:flex;gap:16px;margin-top:16px">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--sage)"></div><span style="font-size:11px;color:var(--muted)">Done</span></div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--rose-light);border:1.5px solid #E8A0A8"></div><span style="font-size:11px;color:var(--muted)">Missed</span></div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--ink)"></div><span style="font-size:11px;color:var(--muted)">Today</span></div>
+      </div>
+      <div class="section-divider" style="margin:16px -24px"></div>
+      <div style="background:var(--sage-light);border:1.5px solid var(--sage-mid);border-radius:var(--rs);padding:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--sage);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Best streak this month</div>
+        <div style="font-family:'Sora',sans-serif;font-size:32px;font-weight:700;color:var(--sage)">8 days 🔥</div>
+        <div style="font-size:12px;color:var(--sage);margin-top:4px">May 9 – May 16</div>
+      </div>
+      <div style="margin-top:12px;background:var(--warm);border:1.5px solid #E7E0D8;border-radius:var(--rs);padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Completion rate</div><div style="font-family:'Sora',sans-serif;font-size:28px;font-weight:700;color:var(--ink);margin-top:2px">76%</div></div>
+          <div style="text-align:right"><div style="font-size:12px;color:var(--muted)">16 of 21 days</div><div style="font-size:12px;color:var(--sage);font-weight:500;margin-top:2px">↑ 12% vs last month</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hm-view" style="padding:16px 24px;display:none">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Darker = more days completed that week.</p>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--sub);width:24px">Apr</span>
+        <div class="heat-row" style="margin:0">
+          <div class="heat-cell heat-2"></div><div class="heat-cell heat-3"></div><div class="heat-cell heat-2"></div><div class="heat-cell heat-1"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--sub);width:24px">May</span>
+        <div class="heat-row" style="margin:0">
+          <div class="heat-cell heat-3"></div><div class="heat-cell heat-3"></div><div class="heat-cell heat-2"></div><div class="heat-cell heat-1"></div>
+        </div>
+      </div>
+      <div style="margin-top:10px" class="heat-legend">
+        <span>Less</span>
+        <div class="lc heat-0"></div><div class="lc heat-1"></div><div class="lc heat-2"></div><div class="lc heat-3"></div>
+        <span>More</span>
+      </div>
+      <div class="section-divider" style="margin:14px -24px"></div>
+      <div style="background:var(--warm);border:1.5px solid #E7E0D8;border-radius:var(--rs);padding:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Month by month</div>
+        <div class="bar-row"><span class="bar-label" style="width:28px;font-size:10px">Mar</span><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div><span class="bar-pct">55%</span></div>
+        <div class="bar-row"><span class="bar-label" style="width:28px;font-size:10px">Apr</span><div class="bar-track"><div class="bar-fill" style="width:64%"></div></div><span class="bar-pct">64%</span></div>
+        <div class="bar-row"><span class="bar-label" style="width:28px;font-size:10px">May</span><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span class="bar-pct">76%</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- GITHUB FLOAT -->
+<div class="gh-float">
+  <div class="gh-tooltip">Kesshavv on GitHub</div>
+  <a class="gh-btn" href="https://github.com/Kesshavv" target="_blank" title="GitHub: Kesshavv">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.682-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.698 1.028 1.591 1.028 2.682 0 3.841-2.337 4.687-4.565 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.137 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+  </a>
+</div>
+
+<script>
+function goScreen(phoneId, fromId, toId){
+  const from = document.getElementById(fromId);
+  const to = document.getElementById(toId);
+  from.classList.add('slide-left');
+  setTimeout(()=>{from.classList.add('hidden');from.classList.remove('slide-left')},300);
+  to.classList.remove('hidden');
+  to.style.transform='translateX(40px)';to.style.opacity='0';
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{to.style.transition='all .35s cubic-bezier(.4,0,.2,1)';to.style.transform='translateX(0)';to.style.opacity='1'})});
+}
+function selectHabit(el){document.querySelectorAll('.habit-card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+function selTime(el){document.querySelectorAll('.time-block').forEach(t=>t.classList.remove('sel'));el.classList.add('sel')}
+function markDone(){
+  const btn=document.getElementById('doneBtn');
+  btn.textContent='✓';btn.classList.add('completed');
+  setTimeout(()=>document.getElementById('confetti').classList.add('show'),400);
+}
+function showMissedDone(){document.getElementById('confetti2').classList.add('show')}
+function switchTab(showId, hideId, el){
+  document.getElementById(showId).style.display='block';
+  document.getElementById(hideId).style.display='none';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Build chain
+const chain=document.getElementById('chainScroll');
+const types=['done','done','done','miss','done','done','done','done','done','done','done','done','miss','done','done','done','done','today','future','future','future'];
+const labels=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21'];
+types.forEach((t,i)=>{
+  const item=document.createElement('div');item.className='chain-item';
+  const dot=document.createElement('div');dot.className='chain-dot '+t;
+  if(t==='done'){dot.innerHTML='<svg viewBox="0 0 24 24" fill="none"><polyline points="20,6 9,17 4,12" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>';}
+  else if(t==='miss'){dot.innerHTML='<svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="#C45E6A" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="#C45E6A" stroke-width="2"/></svg>';}
+  else if(t==='today'){dot.innerHTML='<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="white"/></svg>';}
+  const d=document.createElement('div');d.className='chain-d';d.textContent=labels[i];
+  item.appendChild(dot);item.appendChild(d);
+  if(i<types.length-1)item.style.position='relative';
+  chain.appendChild(item);
+});
+chain.scrollLeft=320;
+</script>
