@@ -8,7 +8,7 @@
 ## 📱 Prototype Preview
 
 | Onboarding | Daily Action | Missed Day | Progress Viz |
-|:-----------:|:------------:|:----------:|:------------:|
+
 | Pick a habit in under 30s | One-tap completion | Guilt-free comeback | Chain + Heatmap |
 
 > 🔗 **[View Interactive Prototype →](https://github.com/Kesshavv)**  
